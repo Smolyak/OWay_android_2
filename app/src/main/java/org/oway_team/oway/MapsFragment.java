@@ -40,7 +40,7 @@ public class MapsFragment extends Fragment implements JSONRouterProxyListener {
     JSONRoute mCurrentRoute;
     MapView mMapView;
     List<Overlay> mCustomOverlays;
-    Overlay mPointsOverlay;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.maps_layout, container, false);
         mMapView = (MapView) view.findViewById(R.id.map);
@@ -62,10 +62,7 @@ public class MapsFragment extends Fragment implements JSONRouterProxyListener {
             mOverlayManager.removeOverlay(it.next());
             it.remove();
         }
-        if (mPointsOverlay != null) {
-            mOverlayManager.removeOverlay(mPointsOverlay);
-            mPointsOverlay = null;
-        }
+
         mMapController.notifyRepaint();
     }
     public void postPoints(List<JSONNavigationItem> items) {
@@ -93,8 +90,7 @@ public class MapsFragment extends Fragment implements JSONRouterProxyListener {
             overlay.setPriority(x);
             overlay.addOverlayItem(kremlin);
             mOverlayManager.addOverlay(overlay);
-//            mCustomOverlays.add(overlay);
-            mPointsOverlay = overlay;
+            mCustomOverlays.add(overlay);
         }
     }
 
@@ -117,15 +113,7 @@ public class MapsFragment extends Fragment implements JSONRouterProxyListener {
             mMapController.getOverlayManager().addOverlay(overlayRect);
             mCustomOverlays.add(overlayRect);
         }
-        if (mPointsOverlay != null) {
-            mMapController.getOverlayManager().removeOverlay(mPointsOverlay);
-        }
         mMapController.notifyRepaint();
-        if (mPointsOverlay != null) {
-            mMapController.getOverlayManager().addOverlay(mPointsOverlay);
-            mMapController.notifyRepaint();
-        }
-
     }
 
     @Override
