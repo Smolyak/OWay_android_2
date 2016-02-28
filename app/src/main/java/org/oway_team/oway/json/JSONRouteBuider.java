@@ -11,6 +11,8 @@ public class JSONRouteBuider {
         JSONRoute route = new JSONRoute();
         try {
             JSONObject rootObj = new JSONObject(jString);
+            route.totalDistance = rootObj.getInt("total_distance")/1000.d;
+            route.totalDuration = rootObj.getInt("total_duration")/60;
             JSONArray jArr = rootObj.getJSONArray("paths");
             for (int i = 0; i < jArr.length(); i++) {
                 JSONLineString lineString = new JSONLineString();

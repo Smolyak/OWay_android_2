@@ -14,4 +14,8 @@
     <string name="search_hint">Where are you going to?</string>
     <string name="max_items_text">Cannot add more than 10 items</string>
     <string name="not_implemented_yet">This feature is not implemented yet</string>
+    <string name="distance">Distance: </string>
+    <string name="time"> Time: </string>
+    <string name="min"> min</string>
+    <string name="km"> km</string>
 </resources>

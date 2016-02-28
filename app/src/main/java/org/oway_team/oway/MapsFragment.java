@@ -102,8 +102,18 @@ public class MapsFragment extends Fragment implements JSONRouterProxyListener {
     }
     //Route building finished
     @Override
-    public void onRouteGetReady(JSONRoute jRoute) {
-        Log.d(TAG, "Route ready; Linestrings cnt: " + jRoute.lineStrings.size());
+    public void onRouteGetReady(final JSONRoute jRoute) {
+        Log.d(TAG, "Route ready: " + jRoute.totalDuration + " : " + jRoute.totalDistance);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().setTitle(
+                        getString(R.string.distance)+" "+jRoute.totalDistance
+                                +" "+ getString(R.string.km) +" "+
+                        getString(R.string.time)+" "+jRoute.totalDuration
+                        +" "+ getString(R.string.min));                        ;
+            }
+        });
         drawRoute(jRoute);
     }
     public void drawRoute(JSONRoute route) {

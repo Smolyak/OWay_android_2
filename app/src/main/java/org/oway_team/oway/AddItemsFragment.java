@@ -141,6 +141,7 @@ public class AddItemsFragment extends Fragment implements SuggesterProxyListener
         if (mAdapter == null || mAdapter.getCount() < 2) {
             mLetsGoButton.setVisibility(View.INVISIBLE);
         }
+        getActivity().setTitle(R.string.app_name);
     }
 
     @Override

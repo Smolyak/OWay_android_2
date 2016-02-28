@@ -14,4 +14,8 @@
     <string name="search_hint">Куда поедем?</string>
     <string name="max_items_text">Нельзя добавится более 10 точек</string>
     <string name="not_implemented_yet">Данная функция еще не реализована</string>
+    <string name="distance">Расстояние: </string>
+    <string name="time"> Время: </string>
+    <string name="min"> мин </string>
+    <string name="km"> км </string>
 </resources>
