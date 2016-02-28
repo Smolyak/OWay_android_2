@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import org.oway_team.oway.json.JSONNavigationItem;
 
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        boolean shouldClose = true;
         switch (id) {
             case R.id.nav_map:
                 showMap();
@@ -116,10 +117,16 @@ public class MainActivity extends AppCompatActivity
                 break;
             default:
                 Log.w(TAG,"This item is not implemented yet");
+                CharSequence text = getString(R.string.not_implemented_yet);
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+                toast.show();
+                shouldClose = false;
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        if (shouldClose) {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+        }
         return true;
     }
     public void onRouteRequested(List<JSONNavigationItem> items) {

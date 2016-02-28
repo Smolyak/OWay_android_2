@@ -12,4 +12,6 @@
     <string name="nav_insert_id">Insert ID Code</string>
     <string name="nav_qr_code">Scan QR Code</string>
     <string name="search_hint">Where are you going to?</string>
+    <string name="max_items_text">Cannot add more than 10 items</string>
+    <string name="not_implemented_yet">This feature is not implemented yet</string>
 </resources>

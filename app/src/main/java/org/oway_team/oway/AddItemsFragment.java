@@ -1,6 +1,7 @@
 package org.oway_team.oway;
 
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.oway_team.oway.json.JSONNavigationItem;
 import org.oway_team.oway.json.SuggesterProxy;
@@ -109,6 +111,14 @@ public class AddItemsFragment extends Fragment implements SuggesterProxyListener
         if (mAdapter == null) {
             mAdapter = new NavigationItemsAdapter(getActivity(), R.layout.navigation_list_item, new ArrayList<JSONNavigationItem>());
             mNavigationItemsListView.setAdapter(mAdapter);
+        }
+        if (mAdapter.getCount() >= 10) {
+            Context context = getActivity();
+            CharSequence text = getString(R.string.max_items_text);
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            return;
         }
         mCityLogo.setVisibility(View.INVISIBLE);
         mAdapter.add(item);

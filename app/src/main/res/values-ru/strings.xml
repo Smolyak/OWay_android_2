@@ -12,4 +12,6 @@
     <string name="nav_insert_id">Ввести ID маршрута</string>
     <string name="nav_qr_code">Сканировать QR код</string>
     <string name="search_hint">Куда поедем?</string>
+    <string name="max_items_text">Нельзя добавится более 10 точек</string>
+    <string name="not_implemented_yet">Данная функция еще не реализована</string>
 </resources>
