@@ -47,8 +47,5 @@ public class OverlayRect extends Overlay {
         return draw;
     }
 
-    @Override
-    public int compareTo(Object o) {
-        return 0;
-    }
+
 }

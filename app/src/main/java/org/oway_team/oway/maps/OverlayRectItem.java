@@ -18,8 +18,5 @@ public class OverlayRectItem extends OverlayItem {
         // TODO Auto-generated constructor stub
     }
 
-    @Override
-    public int compareTo(Object o) {
-        return 0;
-    }
+
 }

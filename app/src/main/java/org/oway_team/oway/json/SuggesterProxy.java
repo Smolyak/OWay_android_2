@@ -66,8 +66,17 @@ public class SuggesterProxy implements AsyncHttpLoaderListener {
                 navItem.title = item.getString("title");
                 navItem.type = item.getString("type");
                 JSONObject location = item.getJSONObject("location");
-                double lon = location.getDouble("lon");
-                double lat = location.getDouble("lat");
+                double lon;
+                double lat;
+                if (location.isNull("lon"))
+                    lon = 0.0;
+                else
+                    lon = location.getDouble("lon");
+
+                if (location.isNull("lat"))
+                    lat = 0.0;
+                else
+                    lat = location.getDouble("lat");
                 navItem.location = new GeoPoint(lat, lon);
                 resList.add(navItem);
             }

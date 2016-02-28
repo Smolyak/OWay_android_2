@@ -40,6 +40,7 @@ public class MapsFragment extends Fragment implements JSONRouterProxyListener {
     JSONRoute mCurrentRoute;
     MapView mMapView;
     List<Overlay> mCustomOverlays;
+    Overlay mPointsOverlay;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.maps_layout, container, false);
         mMapView = (MapView) view.findViewById(R.id.map);
@@ -60,6 +61,10 @@ public class MapsFragment extends Fragment implements JSONRouterProxyListener {
             Log.d(TAG, "Remove overlay");
             mOverlayManager.removeOverlay(it.next());
             it.remove();
+        }
+        if (mPointsOverlay != null) {
+            mOverlayManager.removeOverlay(mPointsOverlay);
+            mPointsOverlay = null;
         }
         mMapController.notifyRepaint();
     }
@@ -84,9 +89,12 @@ public class MapsFragment extends Fragment implements JSONRouterProxyListener {
             kremlin.setBalloonItem(balloonKremlin);
             // Add the object to the layer
             Overlay overlay = new Overlay(mMapController);
+            byte x = 1;
+            overlay.setPriority(x);
             overlay.addOverlayItem(kremlin);
             mOverlayManager.addOverlay(overlay);
-            mCustomOverlays.add(overlay);
+//            mCustomOverlays.add(overlay);
+            mPointsOverlay = overlay;
         }
     }
 
@@ -109,7 +117,15 @@ public class MapsFragment extends Fragment implements JSONRouterProxyListener {
             mMapController.getOverlayManager().addOverlay(overlayRect);
             mCustomOverlays.add(overlayRect);
         }
+        if (mPointsOverlay != null) {
+            mMapController.getOverlayManager().removeOverlay(mPointsOverlay);
+        }
         mMapController.notifyRepaint();
+        if (mPointsOverlay != null) {
+            mMapController.getOverlayManager().addOverlay(mPointsOverlay);
+            mMapController.notifyRepaint();
+        }
+
     }
 
     @Override
