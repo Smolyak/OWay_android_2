@@ -42,7 +42,6 @@
         android:layout_height="fill_parent"
         android:divider="@color/navigation_items_list_divider"
         android:dividerHeight="1dp"
-        android:paddingTop="16dp"
         android:layout_below="@+id/et_holder"
         >
 

@@ -1,23 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    >
+    android:layout_height="60dp">
 
-    <ImageView
-        android:id="@+id/navigation_list_item_category_logo"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:text="1"
-        android:gravity="center"
-        android:layout_gravity="center_vertical" />
-    <TextView
-        android:id="@+id/navigation_list_item_text"
-        android:layout_width="fill_parent"
+    <!-- Bottom View Start-->
+    <LinearLayout
+        android:background="#F72E2E"
+        android:id="@+id/bottom_wrapper"
+        android:layout_width="160dp"
+        android:weightSum="1"
         android:layout_height="match_parent"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:gravity="fill_horizontal|center_vertical"
-        />
-</LinearLayout>
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/trash_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/item_trach"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginLeft="115dp" />
+    </LinearLayout>
+    <!-- Bottom View End-->
+
+    <!-- Surface View Start -->
+    <LinearLayout
+        android:background="#ffffff"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:paddingLeft="16dp"
+            >
+
+            <ImageView
+                android:id="@+id/navigation_list_item_category_logo"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:text="1"
+                android:gravity="center"
+                android:layout_gravity="center_vertical" />
+            <TextView
+                android:id="@+id/navigation_list_item_text"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:gravity="fill_horizontal|center_vertical"
+                />
+        </LinearLayout>
+    </LinearLayout>
+    <!-- Surface View End -->
+
+
+</com.daimajia.swipe.SwipeLayout>
