@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import org.oway_team.oway.json.JSONNavigationItem;
@@ -32,6 +33,7 @@ public class AddItemsFragment extends Fragment implements SuggesterProxyListener
     ListView mAutocompleteListView;
     String mIgnoreText;
     SuggesterProxy mSuggestionProxy;
+    ImageView mCityLogo;
     private static final String TAG = "OWay-addItems";
 
     FloatingActionButton mLetsGoButton;
@@ -44,7 +46,7 @@ public class AddItemsFragment extends Fragment implements SuggesterProxyListener
         mLetsGoButton = (FloatingActionButton)view.findViewById(R.id.items_add_lets_go_button);
         mEditText = (EditText)view.findViewById(R.id.items_add_edit_text);
         mAutocompleteListView = (ListView)view.findViewById(R.id.navigation_items_autocomplete_listview);
-
+        mCityLogo = (ImageView)view.findViewById(R.id.city_logo);
         mSuggestionProxy = new SuggesterProxy(this);
         initListeners();
         return view;
@@ -75,6 +77,7 @@ public class AddItemsFragment extends Fragment implements SuggesterProxyListener
                     if (adapter != null && adapter.getCount() > 0) {
                         Log.d(TAG, "Clearing adapter");
                         adapter.clear();
+
                     }
                 }
             }
@@ -107,6 +110,7 @@ public class AddItemsFragment extends Fragment implements SuggesterProxyListener
             mAdapter = new NavigationItemsAdapter(getActivity(), R.layout.navigation_list_item, new ArrayList<JSONNavigationItem>());
             mNavigationItemsListView.setAdapter(mAdapter);
         }
+        mCityLogo.setVisibility(View.INVISIBLE);
         mAdapter.add(item);
         if (mLetsGoButton.getVisibility() == View.INVISIBLE && mAdapter.getCount() > 1) {
             mLetsGoButton.setVisibility(View.VISIBLE);
@@ -119,8 +123,6 @@ public class AddItemsFragment extends Fragment implements SuggesterProxyListener
         }
         mAdapter = new NavigationItemsAdapter(getActivity(), R.layout.navigation_list_item, items);
         mNavigationItemsListView.setAdapter(mAdapter);
-
-
     }
 
     @Override
@@ -129,7 +131,6 @@ public class AddItemsFragment extends Fragment implements SuggesterProxyListener
         if (mAdapter == null || mAdapter.getCount() < 2) {
             mLetsGoButton.setVisibility(View.INVISIBLE);
         }
-//        fillListViewWithFakeData();
     }
 
     @Override
