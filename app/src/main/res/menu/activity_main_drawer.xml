@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_task_list"
+            android:icon="@drawable/menu_list_normal"
+            android:title="@string/nav_task_list" />
+        <item
+            android:id="@+id/nav_map"
+            android:icon="@drawable/menu_map_normal"
+            android:title="@string/nav_map" />
+        <item
+            android:id="@+id/nav_insert_id"
+            android:icon="@drawable/menu_id_normal"
+            android:title="@string/nav_insert_id" />
+        <item
+            android:id="@+id/nav_qr_code"
+            android:icon="@drawable/menu_qr_normal"
+            android:title="@string/nav_qr_code" />
+    </group>
+
+
+
+</menu>

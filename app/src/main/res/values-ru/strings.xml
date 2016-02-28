@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">OWay</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="email">team@oway.cf</string>
+    <string name="login">OWay Team</string>
+    <string name="nav_task_list">Список Задач</string>
+    <string name="nav_map">Карта</string>
+    <string name="nav_insert_id">Ввести ID маршрута</string>
+    <string name="nav_qr_code">Сканировать QR код</string>
+    <string name="search_hint">Куда поедем?</string>
+</resources>

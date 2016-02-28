@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ru.yandex.yandexmapkit.MapView
+        android:id="@+id/map"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:apiKey="uNqwtoQ74pN8uachO~NR9IoqBewHmL1Rg6qhHGUP2QS5gEIChcjk9V1fN3V4Ig1N2dYjT76GTEBVwrblejfHJdgqAgy73YnoRFEujxDvJUo="
+        android:layout_weight="1"
+        />
+</LinearLayout>
