@@ -5,6 +5,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.oway_team.oway.API;
 import org.oway_team.oway.utils.AsyncHttpLoader;
 import org.oway_team.oway.utils.AsyncHttpLoaderListener;
 
@@ -21,9 +22,7 @@ public class SuggesterProxy implements AsyncHttpLoaderListener {
     SuggesterProxyListener mListener;
     AsyncHttpLoader mLoader;
     //http://oway.cf/api/suggest/address?query=
-    private static final String ADDRESS_PREFIX =        "http://oway.cf/api/suggest/address?query=";
-    private static final String TASK_PREFIX =           "http://oway.cf/api/suggest/keyword?query=";
-    private static final String ADDRESS_TASK_PREFIX =   "http://oway.cf/api/suggest?query=";
+
 
     boolean isInProgress;
     int mCurrentTask;
@@ -47,21 +46,18 @@ public class SuggesterProxy implements AsyncHttpLoaderListener {
         mCurrentTask = TASK_ADDR;
         Log.d(TAG, "Execute!");
         try {
-            mLoader.load(ADDRESS_PREFIX+ URLEncoder.encode(addr, "UTF-8"));
+            mLoader.load(API.ADDRESS_PREFIX+ URLEncoder.encode(addr, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
-    public List<JSONNavigationItem> parseString(String str) {
-        JSONObject dataJsonObj = null;
-        List<JSONNavigationItem> resList = null;
-        resList = new ArrayList<JSONNavigationItem>();
+    public List<JSONNavigationItem> parseSuggest(String str) {
+        List<JSONNavigationItem> resList = new ArrayList<JSONNavigationItem>();
 
         try {
             JSONArray arr = new JSONArray(str);
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject item = arr.getJSONObject(i);
-                Log.d(TAG, "Title found: " + item.getString("title"));
                 JSONNavigationItem navItem = new JSONNavigationItem();
                 navItem.title = item.getString("title");
                 navItem.type = item.getString("type");
@@ -107,7 +103,7 @@ public class SuggesterProxy implements AsyncHttpLoaderListener {
 
     @Override
     public void onHttpGetFinished(String jsonItem) {
-        List<JSONNavigationItem> items = parseString(jsonItem);
+        List<JSONNavigationItem> items = parseSuggest(jsonItem);
         isInProgress = false;
         mListener.onJSONNavigationItemsReady(items);
     }

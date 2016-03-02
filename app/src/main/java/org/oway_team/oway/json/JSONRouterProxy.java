@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.oway_team.oway.API;
 import org.oway_team.oway.utils.AsyncHttpLoader;
 import org.oway_team.oway.utils.AsyncHttpLoaderListener;
 import org.oway_team.oway.utils.AsyncHttpPoster;
@@ -16,14 +17,13 @@ public class JSONRouterProxy implements AsyncHttpLoaderListener {
 
     private static final String TAG = "OWay-JSONProxy";
 
-    private static final String API_LIST_ENTRY_POINT = "http://oway.cf/api/list";
     public JSONRouterProxy(JSONRouterProxyListener listener) {
         mListener = listener;
         mPoster = new AsyncHttpPoster(this);
         mLoader = new AsyncHttpLoader(this);
     }
     public void postPoints(String jQuery) {
-        mPoster.post(API_LIST_ENTRY_POINT,jQuery);
+        mPoster.post(API.API_LIST_ENTRY_POINT,jQuery);
     }
 
     /**
@@ -31,7 +31,7 @@ public class JSONRouterProxy implements AsyncHttpLoaderListener {
      * Ask server to build route
      */
     public void getRoute(String routeId) {
-        String url = API_LIST_ENTRY_POINT+"/"+routeId+"/way";
+        String url = API.API_LIST_ENTRY_POINT+"/"+routeId+"/way";
         Log.d(TAG,"Trying to load: "+url);
         mLoader.load(url);
     }

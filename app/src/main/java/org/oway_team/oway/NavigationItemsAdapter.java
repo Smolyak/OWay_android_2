@@ -51,7 +51,6 @@ public class NavigationItemsAdapter extends ArrayAdapter<JSONNavigationItem> {
         }
 
         String type = mItems.get(position).type;
-        Log.d("WOW", "Inflating item: " + type);
         if (type.equalsIgnoreCase("company")) {
             holder.categoryImageView.setImageDrawable(Common.getDrawable(getContext(),
                     R.drawable.item_org));
