@@ -1,30 +1,117 @@
 package org.oway_team.oway;
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.View;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.LogWriter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import org.oway_team.oway.json.JSONNavigationItem;
+import org.oway_team.oway.api.APIListener;
+import org.oway_team.oway.api.APILoadingError;
+import org.oway_team.oway.api.APIManager;
+import org.oway_team.oway.json.NavigationItem;
+import org.oway_team.oway.json.NavigationRoute;
 
+import java.io.PrintWriter;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-    AddItemsFragment mAddItemsFragment;
+        implements NavigationView.OnNavigationItemSelectedListener,
+        APIListener {
+    RouteManagementFragment mRouteManagementFragment;
     MapsFragment mMapsFragment;
+
+
     private static final String TAG = "OWay-Main";
+    private static final int MSG_PARSE_INTENT_DATA = 1;
+    static MainHandler mHandler = new MainHandler(Looper.getMainLooper());
+
+    @Override
+    public void onRouteLoadingStarted() {
+
+    }
+
+    @Override
+    public void onRouteReady(NavigationRoute route) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                getSupportFragmentManager().dump("", null,
+                        new PrintWriter(System.out, true), null);
+                Log.d(TAG, "Destroyed: " + getSupportFragmentManager().isDestroyed());
+                ft.hide(mRouteManagementFragment);
+                ft.show(mMapsFragment);
+                ft.addToBackStack(null);
+                ft.commit();
+                View view = getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onRouteLoadingFailed(APILoadingError error) {
+
+    }
+
+    @Override
+    public void onSuggestionReady(List<NavigationItem> items) {
+
+    }
+
+    @Override
+    public void onSuggestionLoadingFailed(APILoadingError error) {
+
+    }
+
+    static class MainHandler extends Handler {
+        public MainHandler(Looper mainLooper) {
+            super(mainLooper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case MSG_PARSE_INTENT_DATA:
+                    Intent intent = (Intent)msg.obj;
+                    if (intent.getData() == null) {
+                        Log.e(TAG, "Nothing to parse");
+                        return;
+                    }
+                    String routeId = intent.getData().getQueryParameter("id");
+                    if (routeId != null) {
+                        APIManager.instance().loadRoute(routeId);
+                    }
+                    break;
+                default:
+                    Log.w(TAG,"Unknown Handler msg"+msg.what);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,15 +129,32 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mAddItemsFragment = new AddItemsFragment();
+        mRouteManagementFragment = new RouteManagementFragment();
         mMapsFragment = new MapsFragment();
-
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.main_fragment_holder, mMapsFragment);
+        fragmentTransaction.add(R.id.main_fragment_holder, mRouteManagementFragment);
         fragmentTransaction.hide(mMapsFragment);
-        fragmentTransaction.add(R.id.main_fragment_holder, mAddItemsFragment);
         fragmentTransaction.commit();
+        APIManager.instance().addListener(this);
+        Intent intent = getIntent();
+        if (intent.getData() != null) {
+            Message msg = mHandler.obtainMessage(MSG_PARSE_INTENT_DATA);
+            msg.obj = intent;
+            mHandler.sendMessage(msg);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        APIManager.instance().removeListener(this);
     }
 
     @Override
@@ -67,6 +171,14 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+
         return true;
     }
 
@@ -78,7 +190,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
             return true;
         }
 
@@ -88,15 +200,15 @@ public class MainActivity extends AppCompatActivity
         if(!mMapsFragment.isVisible()) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.show(mMapsFragment);
-            ft.hide(mAddItemsFragment);
+            ft.hide(mRouteManagementFragment);
             ft.commit();
         }
     }
 
     public void showTaskList() {
-        if(!mAddItemsFragment.isVisible()) {
+        if(!mRouteManagementFragment.isVisible()) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.show(mAddItemsFragment);
+            ft.show(mRouteManagementFragment);
             ft.hide(mMapsFragment);
             ft.commit();
         }
@@ -104,6 +216,7 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        Log.d(TAG, "Nav item selected");
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         boolean shouldClose = true;
@@ -129,19 +242,14 @@ public class MainActivity extends AppCompatActivity
         }
         return true;
     }
-    public void onRouteRequested(List<JSONNavigationItem> items) {
-        Log.d(TAG, "Route requested");
-        //TODO: Some api interaction
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.show(mMapsFragment);
-        ft.hide(mAddItemsFragment);
-        ft.addToBackStack(null);
-        ft.commit();
-        mMapsFragment.postPoints(items);
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

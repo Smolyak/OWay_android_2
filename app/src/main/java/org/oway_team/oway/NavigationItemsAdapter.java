@@ -1,7 +1,6 @@
 package org.oway_team.oway;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,27 +9,27 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.oway_team.oway.json.JSONNavigationItem;
+import org.oway_team.oway.json.NavigationItem;
 import org.oway_team.oway.utils.Common;
 
 import java.util.List;
 
-public class NavigationItemsAdapter extends ArrayAdapter<JSONNavigationItem> {
+public class NavigationItemsAdapter extends ArrayAdapter<NavigationItem> {
     Context mContext;
-    List<JSONNavigationItem> mItems;
+    List<NavigationItem> mItems;
     int mResId;
     class ViewHolder {
         ImageView categoryImageView;
         TextView textTv;
         LinearLayout ll;
     }
-    public NavigationItemsAdapter(Context context, int resource, List<JSONNavigationItem> objects) {
+    public NavigationItemsAdapter(Context context, int resource, List<NavigationItem> objects) {
         super(context, resource, objects);
         mContext = context;
         mItems = objects;
         mResId = resource;
     }
-    public List<JSONNavigationItem> getItems() {
+    public List<NavigationItem> getItems() {
         return mItems;
     }
     @Override

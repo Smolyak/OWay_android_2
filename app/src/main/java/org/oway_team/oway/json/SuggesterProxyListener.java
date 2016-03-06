@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface SuggesterProxyListener {
     public void onRequestFailed();
-    public void onJSONNavigationItemsReady(List<JSONNavigationItem> items);
+    public void onNavigationItemsReady(List<NavigationItem> items);
 }

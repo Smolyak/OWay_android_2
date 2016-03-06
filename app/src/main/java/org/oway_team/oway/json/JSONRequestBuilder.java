@@ -7,13 +7,13 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class JSONRequestBuilder {
-    public static String buildPointsList(List<JSONNavigationItem> items) {
+    public static String buildPointsList(List<NavigationItem> items) {
         JSONObject tmpObject = new JSONObject();
         JSONObject resObject = new JSONObject();
         try {
             JSONArray jsonArray = new JSONArray();
             tmpObject.put("title", "test");
-            for (JSONNavigationItem item : items) {
+            for (NavigationItem item : items) {
                 JSONObject jItem = new JSONObject();
                 jItem.put("title", item.title);
                 jItem.put("type",item.type);

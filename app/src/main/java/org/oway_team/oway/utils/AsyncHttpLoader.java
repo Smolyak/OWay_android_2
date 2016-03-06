@@ -9,7 +9,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class AsyncHttpLoader {
-    private final String TAG = "";
+    //TODO: Rewrite me
+    private static final int REQUEST_TIMEOUT = 500;
+    private final String TAG = "AsyncHttpLoader";
     AsyncHttpLoaderListener mListener;
     HttpURLConnection urlConnection = null;
     BufferedReader reader = null;
@@ -22,7 +24,7 @@ public class AsyncHttpLoader {
             Thread parentThread = mThread;
             String sUrl = mUrl;
             try {
-                Thread.sleep(1000);
+                Thread.sleep(REQUEST_TIMEOUT);
             } catch (InterruptedException e) {
                 //Just ignore
                 Log.w(TAG,"Thread was interrupted: "+sUrl);

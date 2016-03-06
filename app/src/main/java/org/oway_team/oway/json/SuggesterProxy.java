@@ -5,7 +5,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.oway_team.oway.API;
+import org.oway_team.oway.api.API;
 import org.oway_team.oway.utils.AsyncHttpLoader;
 import org.oway_team.oway.utils.AsyncHttpLoaderListener;
 
@@ -51,14 +51,14 @@ public class SuggesterProxy implements AsyncHttpLoaderListener {
             e.printStackTrace();
         }
     }
-    public List<JSONNavigationItem> parseSuggest(String str) {
-        List<JSONNavigationItem> resList = new ArrayList<JSONNavigationItem>();
+    public List<NavigationItem> parseSuggest(String str) {
+        List<NavigationItem> resList = new ArrayList<NavigationItem>();
 
         try {
             JSONArray arr = new JSONArray(str);
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject item = arr.getJSONObject(i);
-                JSONNavigationItem navItem = new JSONNavigationItem();
+                NavigationItem navItem = new NavigationItem();
                 navItem.title = item.getString("title");
                 navItem.type = item.getString("type");
                 JSONObject location = item.getJSONObject("location");
@@ -103,9 +103,9 @@ public class SuggesterProxy implements AsyncHttpLoaderListener {
 
     @Override
     public void onHttpGetFinished(String jsonItem) {
-        List<JSONNavigationItem> items = parseSuggest(jsonItem);
+        List<NavigationItem> items = parseSuggest(jsonItem);
         isInProgress = false;
-        mListener.onJSONNavigationItemsReady(items);
+        mListener.onNavigationItemsReady(items);
     }
 
     @Override

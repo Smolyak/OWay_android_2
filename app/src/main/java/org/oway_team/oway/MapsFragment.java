@@ -1,5 +1,6 @@
 package org.oway_team.oway;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -10,13 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import org.oway_team.oway.json.JSONLineString;
-import org.oway_team.oway.json.JSONNavigationItem;
-import org.oway_team.oway.json.JSONRequestBuilder;
-import org.oway_team.oway.json.JSONRoute;
-import org.oway_team.oway.json.JSONRouterProxy;
-import org.oway_team.oway.json.JSONRouterProxyListener;
+import org.oway_team.oway.api.APIListener;
+import org.oway_team.oway.api.APILoadingError;
+import org.oway_team.oway.api.APIManager;
+import org.oway_team.oway.json.NavigationItem;
+import org.oway_team.oway.json.NavigationLineString;
+import org.oway_team.oway.json.NavigationRoute;
 import org.oway_team.oway.maps.OverlayRect;
+import org.oway_team.oway.utils.Common;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,35 +31,64 @@ import ru.yandex.yandexmapkit.overlay.Overlay;
 import ru.yandex.yandexmapkit.overlay.OverlayItem;
 import ru.yandex.yandexmapkit.overlay.balloon.BalloonItem;
 import ru.yandex.yandexmapkit.utils.GeoPoint;
+import ru.yandex.yandexmapkit.utils.Utils;
 
-public class MapsFragment extends Fragment implements JSONRouterProxyListener {
+public class MapsFragment extends Fragment implements APIListener {
     public static final String TAG = "OWay-Map";
     MapController mMapController;
     LinearLayout mView;
-    JSONRouterProxy mJSONRouterProxy;
     OverlayManager mOverlayManager;
-    String mRouteId;
-    JSONRoute mCurrentRoute;
+    NavigationRoute mCurrentRoute;
     MapView mMapView;
+    NavigationRoute mRoute;
     List<Overlay> mCustomOverlays;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.maps_layout, container, false);
         mMapView = (MapView) view.findViewById(R.id.map);
         mMapView.showBuiltInScreenButtons(true);
-        mJSONRouterProxy = new JSONRouterProxy(this);
         mMapController = mMapView.getMapController();
         //Start map on Novosibirsk
-        mMapController.setPositionAnimationTo(new GeoPoint(55.018803,82.933952));
+        mMapController.setPositionAnimationTo(new GeoPoint(55.018803, 82.933952));
         mOverlayManager = mMapController.getOverlayManager();
 
         mCustomOverlays = new ArrayList<Overlay>();
+        APIManager.instance().addListener(this);
         return view;
     }
-    public void clearOverlays() {
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+//        if(mRoute != null) {
+//            //Ok; We're recved Context so we can draw route!
+//            onRouteReady(mRoute);
+//            mRoute = null;
+//        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        APIManager.instance().removeListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+//        APIManager.instance().addListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+//        APIManager.instance().removeListener(this);
+    }
+
+    public void clearMap() {
         if (mOverlayManager == null || mMapController == null || mCustomOverlays.size() == 0)
             return;
-        for (Iterator<Overlay> it = mCustomOverlays.listIterator(); it.hasNext();) {
+        for (Iterator<Overlay> it = mCustomOverlays.listIterator(); it.hasNext(); ) {
             Log.d(TAG, "Remove overlay");
             mOverlayManager.removeOverlay(it.next());
             it.remove();
@@ -65,68 +96,67 @@ public class MapsFragment extends Fragment implements JSONRouterProxyListener {
 
         mMapController.notifyRepaint();
     }
-    public void postPoints(List<JSONNavigationItem> items) {
-        Log.d(TAG, "Build route");
-        mRouteId = "";
-        clearOverlays();
-        String jQuery = JSONRequestBuilder.buildPointsList(items);
-        mJSONRouterProxy.postPoints(jQuery);
-        for (JSONNavigationItem item: items) {
-            Drawable overlayItemDrawable;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                overlayItemDrawable = getResources().getDrawable(R.drawable.item, getActivity().getTheme());
-            } else {
-                overlayItemDrawable = getResources().getDrawable(R.drawable.item);
-            }
-            final OverlayItem kremlin = new OverlayItem(item.location, overlayItemDrawable);
-            // Create a balloon model for the object
-            BalloonItem balloonKremlin = new BalloonItem(getActivity(),kremlin.getGeoPoint());
-            balloonKremlin.setText(item.title);
-//        // Add the balloon model to the object
-            kremlin.setBalloonItem(balloonKremlin);
-            // Add the object to the layer
-            Overlay overlay = new Overlay(mMapController);
-            byte x = 1;
-            overlay.setPriority(x);
-            overlay.addOverlayItem(kremlin);
-            mOverlayManager.addOverlay(overlay);
-            mCustomOverlays.add(overlay);
-        }
-    }
-
-    //List post finished
-    @Override
-    public void onRoutePostReady(String routeId) {
-        mRouteId = routeId;
-        mJSONRouterProxy.getRoute(routeId);
-    }
-    //Route building finished
-    @Override
-    public void onRouteGetReady(final JSONRoute jRoute) {
-        Log.d(TAG, "Route ready: " + jRoute.totalDuration + " : " + jRoute.totalDistance);
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getActivity().setTitle(jRoute.totalDistance
-                                +" "+ getString(R.string.km) +", "+
-                        +jRoute.totalDuration
-                        +" "+ getString(R.string.min));                        ;
-            }
-        });
-        drawRoute(jRoute);
-    }
-    public void drawRoute(JSONRoute route) {
+    public void drawRoute(NavigationRoute route) {
         mCurrentRoute = route;
-        for (JSONLineString lineString:route.lineStrings) {
+        for (NavigationLineString lineString : route.getLineStringsList()) {
             OverlayRect overlayRect = new OverlayRect(mMapController, lineString);
             mMapController.getOverlayManager().addOverlay(overlayRect);
             mCustomOverlays.add(overlayRect);
         }
         mMapController.notifyRepaint();
+
+    }
+    public void drawNavigationPoints(NavigationRoute route) {
+        Log.d(TAG, "Draw nav points");
+        for (NavigationItem item : route.getNavigationPoints()) {
+            Drawable overlayItemDrawable = Common.getDrawable(getContext(),R.drawable.item);
+            final OverlayItem pointOverlay = new OverlayItem(item.location, overlayItemDrawable);
+            // Create a balloon model for the object
+            BalloonItem pointBalloon = new BalloonItem(getActivity(), pointOverlay.getGeoPoint());
+            pointBalloon.setText(item.title);
+//        // Add the balloon model to the object
+            pointOverlay.setBalloonItem(pointBalloon);
+            // Add the object to the layer
+            Overlay overlay = new Overlay(mMapController);
+            byte x = 1;
+            overlay.setPriority(x);
+            overlay.addOverlayItem(pointOverlay);
+            mOverlayManager.addOverlay(overlay);
+            mCustomOverlays.add(overlay);
+        }
     }
 
     @Override
-    public void onRouteLoadingError() {
+    public void onRouteLoadingStarted() {
+
+    }
+
+    @Override
+    public void onRouteReady(NavigationRoute route) {
+        Log.d(TAG, "Route ready");
+        if (getContext() == null) {
+            Log.d(TAG, "Not attached yet!");
+            mRoute = route;
+        } else {
+            clearMap();
+            drawRoute(route);
+            drawNavigationPoints(route);
+        }
+    }
+
+    @Override
+    public void onRouteLoadingFailed(APILoadingError error) {
+
+    }
+
+    @Override
+    public void onSuggestionReady(List<NavigationItem> items) {
+
+    }
+
+    @Override
+    public void onSuggestionLoadingFailed(APILoadingError error) {
 
     }
 }
+

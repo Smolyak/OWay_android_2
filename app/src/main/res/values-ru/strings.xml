@@ -4,7 +4,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Настройки</string>
+    <string name="action_search">Поиск</string>
     <string name="email">team@oway.cf</string>
     <string name="login">OWay Team</string>
     <string name="nav_task_list">Список Задач</string>

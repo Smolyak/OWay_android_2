@@ -8,18 +8,18 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import org.oway_team.oway.json.JSONNavigationItem;
+import org.oway_team.oway.json.NavigationItem;
 
 import java.util.List;
 
-public class AutoCompleteAdapter extends ArrayAdapter<JSONNavigationItem>{
+public class AutoCompleteAdapter extends ArrayAdapter<NavigationItem>{
     Context mContext;
-    List<JSONNavigationItem> mItems;
+    List<NavigationItem> mItems;
     int mResId;
     class ViewHolder {
         TextView textTv;
     }
-    public AutoCompleteAdapter(Context context, int resource, List<JSONNavigationItem> objects) {
+    public AutoCompleteAdapter(Context context, int resource, List<NavigationItem> objects) {
         super(context, resource, objects);
         Log.d("ADAPTER", "Building new adapter: " + objects.size());
         mContext = context;
@@ -28,7 +28,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<JSONNavigationItem>{
     }
 
     @Override
-    public JSONNavigationItem getItem(int position) {
+    public NavigationItem getItem(int position) {
         Log.d("ADAPTER","Asking for: "+position +" : " + mItems.size());
         return mItems.get(position);
 //     return super.getItem(position);

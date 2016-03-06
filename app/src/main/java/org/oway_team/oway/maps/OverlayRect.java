@@ -1,7 +1,7 @@
 package org.oway_team.oway.maps;
 import android.content.Context;
 
-import org.oway_team.oway.json.JSONLineString;
+import org.oway_team.oway.json.NavigationLineString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +17,9 @@ public class OverlayRect extends Overlay {
     Context mContext;
     MapController mMapController;
     RectRender rectRender;
-    JSONLineString mLinestring;
+    NavigationLineString mLinestring;
 
-    public OverlayRect(MapController mapController, JSONLineString lineString) {
+    public OverlayRect(MapController mapController, NavigationLineString lineString) {
         super(mapController);
         mMapController = mapController;
         mContext = mapController.getContext();

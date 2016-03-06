@@ -1,10 +1,11 @@
 <resources>
-    <string name="app_name">OWay</string>
+    <string name="app_name" translatable="false">OWay</string>
+    <string name="api_host" translatable="false">oway.akeinhell.xyz</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
     <string name="email">team@oway.cf</string>
     <string name="login">OWay Team</string>
     <string name="nav_task_list">Task List</string>

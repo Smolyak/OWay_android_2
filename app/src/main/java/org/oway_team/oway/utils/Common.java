@@ -4,6 +4,7 @@ package org.oway_team.oway.utils;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.Log;
 
 public class Common {
     public static Drawable getDrawable(Context context, int id) {
