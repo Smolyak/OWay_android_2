@@ -17,6 +17,16 @@ android {
             minifyEnabled false
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def file = output.outputFile
+                    def fileName = "OWay.apk"
+                    output.outputFile = new File(file.parent + "/../../../../compiled", fileName)
+
+                }
+
+            }
+
         }
     }
 }
