@@ -1,5 +1,6 @@
 package org.oway_team.oway;
 
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -49,9 +50,31 @@ public class MainActivity extends AppCompatActivity
     private static final int MSG_PARSE_INTENT_DATA = 1;
     static MainHandler mHandler = new MainHandler(Looper.getMainLooper());
 
+    static class ProgressDialogManager {
+        private static ProgressDialog mDialog;
+        static void showDialog(Context context) {
+            if (context == null)
+                return;
+            if (mDialog == null) {
+                mDialog = ProgressDialog.show(context,"",context.getString(R.string.loading_dialog_text),false);
+            }
+        }
+        static void dismissDialog() {
+            if (mDialog != null) {
+                mDialog.dismiss();
+                mDialog = null;
+            }
+        }
+
+    }
     @Override
     public void onRouteLoadingStarted() {
-
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ProgressDialogManager.showDialog(MainActivity.this);
+            }
+        });
     }
 
     @Override
@@ -71,6 +94,7 @@ public class MainActivity extends AppCompatActivity
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
+                ProgressDialogManager.dismissDialog();
             }
         });
 
@@ -78,7 +102,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRouteLoadingFailed(APILoadingError error) {
-
+        //TODO: Show Error?
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ProgressDialogManager.dismissDialog();
+            }
+        });
     }
 
     @Override

@@ -18,4 +18,5 @@
     <string name="time"> Время: </string>
     <string name="min"> мин </string>
     <string name="km"> км </string>
+    <string name="loading_dialog_text">Загрузка. Пожалуйста, подождите…</string>
 </resources>

@@ -19,4 +19,5 @@
     <string name="time"> Time: </string>
     <string name="min"> min</string>
     <string name="km"> km</string>
+    <string name="loading_dialog_text">Loading. Please wait…</string>
 </resources>

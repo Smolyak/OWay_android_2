@@ -24,7 +24,8 @@ public class APIManager {
     NavigationProxyListener mRouteLoaderListener = new NavigationProxyListener() {
         @Override
         public void onRoutePostReady(String routeId) {
-            mRouteLoader.loadRoute(routeId);
+            if (routeId != null && !routeId.isEmpty())
+                loadRoadById(routeId);
         }
 
         @Override
@@ -67,7 +68,14 @@ public class APIManager {
         mRouteLoader = new NavigationRouterProxy(mRouteLoaderListener);
         mSuggesterProxy = new SuggesterProxy(mSuggesterProxyListener);
     }
+    private void loadRoadById(String routeId) {
+        mRouteLoader.loadRoute(routeId);
+    }
 
+    private void notifyLoadingStart() {
+        for (APIListener listener: mListeners)
+            listener.onRouteLoadingStarted();
+    }
 
     public static APIManager instance() {
         if (mInstance == null) {
@@ -85,17 +93,38 @@ public class APIManager {
             mListeners.remove(listener);
         }
     }
+
+    /**
+     * Load cached route by known id
+     * Method will notify all listeners about loading start
+     * @param routeId - id of route which was received from one of external sources: dialog,
+     *                url, QR-code etc.
+     */
     public void loadRoute(String routeId) {
-        mRouteLoader.loadRoute(routeId);
+        if (routeId == null || routeId.isEmpty()) {
+            Log.e(TAG,"Incorrect route");
+            return;
+        }
+
+        notifyLoadingStart();
+        loadRoadById(routeId);
     }
 
+    /**
+     * Build route by NavigationPoints
+     * Method will notify all listeners about loading start
+     * @param points
+     */
     public void buildRoute(List<NavigationItem> points) {
         if (points == null || points.size() < 2 ) {
             Log.w(TAG, "Cannot build route for this points list");
         }
+
+        notifyLoadingStart();
         String jQuery = JSONRequestBuilder.buildPointsList(points);
         mRouteLoader.postPoints(jQuery);
     }
+
     public void loadSuggestions(String query) {
         if (query.length() >= 2 ) {
             mSuggesterProxy.getAddr(query);
