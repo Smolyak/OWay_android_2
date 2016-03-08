@@ -42,6 +42,7 @@ public class AsyncHttpLoader {
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
+                Log.d(TAG, "HTTP RESP CODE: "+urlConnection.getResponseCode());
 
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();

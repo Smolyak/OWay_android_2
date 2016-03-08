@@ -8,43 +8,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/image_blank"
-        android:layout_centerInParent="true" />
-    <LinearLayout
-        android:id="@+id/et_holder"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="?attr/colorPrimary">
-    <EditText
-        android:id="@+id/items_add_edit_text"
-        android:hint="@string/search_hint"
-        android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:singleLine="true"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:imeOptions="actionSearch"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:background="#ffffff"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentBottom="false"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_centerInParent="true"
         />
-    </LinearLayout>
-    <ListView
-        android:id="@+id/navigation_items_autocomplete_listview"
-        android:layout_below="@id/et_holder"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:divider="@android:color/holo_blue_dark">
-    </ListView>
     <ListView
         android:id="@+id/items_add_list_view"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:divider="@color/navigation_items_list_divider"
         android:dividerHeight="1dp"
-        android:layout_below="@+id/et_holder"
         >
-
     </ListView>
     <LinearLayout
         android:id="@+id/items_add_buttons_layout"

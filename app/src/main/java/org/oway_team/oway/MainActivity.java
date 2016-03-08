@@ -3,6 +3,8 @@ package org.oway_team.oway;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,6 +13,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.LogWriter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -28,6 +32,7 @@ import org.oway_team.oway.api.APILoadingError;
 import org.oway_team.oway.api.APIManager;
 import org.oway_team.oway.json.NavigationItem;
 import org.oway_team.oway.json.NavigationRoute;
+import org.oway_team.oway.utils.Common;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity
         APIListener {
     RouteManagementFragment mRouteManagementFragment;
     MapsFragment mMapsFragment;
+    SearchView mSearchView;
 
 
     private static final String TAG = "OWay-Main";
@@ -56,7 +62,6 @@ public class MainActivity extends AppCompatActivity
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 getSupportFragmentManager().dump("", null,
                         new PrintWriter(System.out, true), null);
-                Log.d(TAG, "Destroyed: " + getSupportFragmentManager().isDestroyed());
                 ft.hide(mRouteManagementFragment);
                 ft.show(mMapsFragment);
                 ft.addToBackStack(null);
@@ -77,7 +82,22 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSuggestionReady(List<NavigationItem> items) {
+    public void onSuggestionReady(final List<NavigationItem> items) {
+        final Cursor cursor = Common.buildSuggestionsCursor(items);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+                mSearchView.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+
+                mSearchView.setSuggestionsAdapter(
+                        new SearchSuggestionsAdapter(getApplicationContext(), cursor, items));
+                Log.d(TAG, "Notify with items cnt: " + items.size());
+                mSearchView.getSuggestionsAdapter().notifyDataSetChanged();
+                mSearchView.showContextMenu();
+            }
+        });
 
     }
 
@@ -174,11 +194,27 @@ public class MainActivity extends AppCompatActivity
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        mSearchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView.setQueryRefinementEnabled(true);
+        //HACK: Without this suggestor won't work correctly
+        final Cursor cursor = Common.buildSuggestionsCursor(null);
+        mSearchView.setSuggestionsAdapter
+                (new SearchSuggestionsAdapter(this, cursor, null));
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String query) {
+                APIManager.instance().loadSuggestions(query);
+                return false;
+            }
+        });
+        mRouteManagementFragment.onSearchViewReady(mSearchView);
         return true;
     }
 
@@ -216,7 +252,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        Log.d(TAG, "Nav item selected");
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         boolean shouldClose = true;

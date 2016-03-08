@@ -42,18 +42,15 @@ public class SuggesterProxy implements AsyncHttpLoaderListener {
     }
 
     public void getAddr(String addr) {
-        Log.d(TAG, "GetAddr called: "+addr);
         mCurrentTask = TASK_ADDR;
-        Log.d(TAG, "Execute!");
         try {
             mLoader.load(API.ADDRESS_PREFIX+ URLEncoder.encode(addr, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
-    public List<NavigationItem> parseSuggest(String str) {
+    public List<NavigationItem> parseSuggestions(String str) {
         List<NavigationItem> resList = new ArrayList<NavigationItem>();
-
         try {
             JSONArray arr = new JSONArray(str);
             for (int i = 0; i < arr.length(); i++) {
@@ -103,7 +100,7 @@ public class SuggesterProxy implements AsyncHttpLoaderListener {
 
     @Override
     public void onHttpGetFinished(String jsonItem) {
-        List<NavigationItem> items = parseSuggest(jsonItem);
+        List<NavigationItem> items = parseSuggestions(jsonItem);
         isInProgress = false;
         mListener.onNavigationItemsReady(items);
     }

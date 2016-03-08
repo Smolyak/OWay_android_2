@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -35,11 +36,9 @@ import java.util.List;
 public class RouteManagementFragment extends Fragment implements APIListener {
     ListView mNavigationItemsListView;
     NavigationItemsAdapter mAdapter;
-    AutoCompleteAdapter mAutocompleteAdapter;
-    EditText mEditText;
-    ListView mAutocompleteListView;
-    String mIgnoreText;
     ImageView mCityLogo;
+
+    SearchView mSearchView;
     private static final String TAG = "OWay-RouteManagement";
 
     FloatingActionButton mLetsGoButton;
@@ -50,8 +49,6 @@ public class RouteManagementFragment extends Fragment implements APIListener {
         View view = inflater.inflate(R.layout.items_add_layout, container, false);
         mNavigationItemsListView = (ListView)view.findViewById(R.id.items_add_list_view);
         mLetsGoButton = (FloatingActionButton)view.findViewById(R.id.items_add_lets_go_button);
-        mEditText = (EditText)view.findViewById(R.id.items_add_edit_text);
-        mAutocompleteListView = (ListView)view.findViewById(R.id.navigation_items_autocomplete_listview);
         mCityLogo = (ImageView)view.findViewById(R.id.city_logo);
 
         initListeners();
@@ -84,45 +81,25 @@ public class RouteManagementFragment extends Fragment implements APIListener {
                 onBuildRoadButtonClicked();
             }
         });
-        mEditText.addTextChangedListener(new TextWatcher() {
+    }
+    public void onSearchViewReady(SearchView searchView) {
+        Log.d(TAG,"Registering onClickListener");
+        mSearchView = searchView;
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public boolean onSuggestionSelect(int position) {
+                return false;
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals(mIgnoreText)) {
-                    mIgnoreText = "";
-                    return;
-                } else if (s.length() >= 3 && !s.toString().equals(mIgnoreText)) {
-                    Log.d(TAG, "On text change: " + s);
-
-                    APIManager.instance().loadSuggestions(s.toString());
-                } else {
-                    ArrayAdapter<String> adapter = (ArrayAdapter<String>)mAutocompleteListView.getAdapter();
-                    if (adapter != null && adapter.getCount() > 0) {
-                        Log.d(TAG, "Clearing adapter");
-                        adapter.clear();
-
-                    }
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+            public boolean onSuggestionClick(int position) {
+                NavigationItem item = ((SearchSuggestionsAdapter)mSearchView.
+                        getSuggestionsAdapter()).getNavItem(position);
+                addNavigationItemToList((NavigationItem) item);
+                return true;
             }
         });
-        mAutocompleteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "Items: " + mAutocompleteAdapter.getCount());
-                addNavigationItemToList(mAutocompleteAdapter.getItem(position));
-                mEditText.setText("");
-//                ArrayAdapter<String> adapter = (ArrayAdapter<String>) mAutocompleteListView.getAdapter();
-                mAutocompleteAdapter.clear();
-            }
-        });
+
     }
     private void onBuildRoadButtonClicked() {
         List<NavigationItem> items = mAdapter.getItems();
@@ -175,20 +152,7 @@ public class RouteManagementFragment extends Fragment implements APIListener {
 
     @Override
     public void onSuggestionReady(List<NavigationItem> items) {
-        Log.d(TAG, "Items recved: "+items.size());
-        ArrayList<String> strings = new ArrayList<>();
-        for (NavigationItem item: items) {
-            strings.add(item.title);
-        }
-        mAutocompleteAdapter
-                = new AutoCompleteAdapter(getActivity(),android.R.layout.simple_list_item_1,items);
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mAutocompleteListView.setAdapter(mAutocompleteAdapter);
-                mAutocompleteListView.bringToFront();
-            }
-        });
+
     }
 
     @Override

@@ -52,10 +52,12 @@ public class APIManager {
 
         @Override
         public void onNavigationItemsReady(List<NavigationItem> items) {
+            Log.d(TAG, "Suggestions are ready: " + items.size());
             if (items == null)
                 return;
-            for (APIListener listener : mListeners)
+            for (APIListener listener : mListeners) {
                 listener.onSuggestionReady(items);
+            }
         }
     };
 
@@ -95,6 +97,8 @@ public class APIManager {
         mRouteLoader.postPoints(jQuery);
     }
     public void loadSuggestions(String query) {
-        mSuggesterProxy.getAddr(query);
+        if (query.length() >= 2 ) {
+            mSuggesterProxy.getAddr(query);
+        }
     }
 }
