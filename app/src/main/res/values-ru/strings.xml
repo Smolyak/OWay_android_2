@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">OWay</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_search">Поиск</string>
     <string name="email">team@oway.cf</string>
     <string name="login">OWay Team</string>
@@ -19,4 +15,6 @@
     <string name="min"> мин </string>
     <string name="km"> км </string>
     <string name="loading_dialog_text">Загрузка. Пожалуйста, подождите…</string>
+    <string name="route_input_title">Введите id маршрута</string>
+    <string name="cancel">Отмена</string>
 </resources>

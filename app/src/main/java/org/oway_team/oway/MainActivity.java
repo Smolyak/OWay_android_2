@@ -3,7 +3,9 @@ package org.oway_team.oway;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
@@ -17,15 +19,18 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import org.oway_team.oway.api.APIListener;
@@ -270,7 +275,26 @@ public class MainActivity extends AppCompatActivity
             ft.commit();
         }
     }
-
+    public void showInputIdDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle(getString(R.string.route_input_title));
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setRawInputType(Configuration.KEYBOARD_12KEY);
+        alert.setView(input);
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //Put actions for OK button here
+                APIManager.instance().loadRoute(input.getText().toString());
+            }
+        });
+        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //Put actions for CANCEL button here, or leave in blank
+            }
+        });
+        alert.show();
+    }
     public void showTaskList() {
         if(!mRouteManagementFragment.isVisible()) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -292,6 +316,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_task_list:
                 showTaskList();
+                break;
+            case R.id.nav_insert_id:
+                showInputIdDialog();
                 break;
             default:
                 Log.w(TAG,"This item is not implemented yet");

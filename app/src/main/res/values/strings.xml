@@ -20,4 +20,6 @@
     <string name="min"> min</string>
     <string name="km"> km</string>
     <string name="loading_dialog_text">Loading. Please wait…</string>
+    <string name="route_input_title">Enter route id</string>
+    <string name="cancel">Cancel</string>
 </resources>
