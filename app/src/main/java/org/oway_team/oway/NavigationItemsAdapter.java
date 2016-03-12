@@ -18,6 +18,17 @@ public class NavigationItemsAdapter extends ArrayAdapter<NavigationItem> {
     Context mContext;
     List<NavigationItem> mItems;
     int mResId;
+
+    private String mRouteId;
+
+    public String getRouteId() {
+        return mRouteId;
+    }
+
+    public void setRouteId(String routeId) {
+        this.mRouteId = routeId;
+    }
+
     class ViewHolder {
         ImageView categoryImageView;
         TextView textTv;
@@ -28,6 +39,8 @@ public class NavigationItemsAdapter extends ArrayAdapter<NavigationItem> {
         mContext = context;
         mItems = objects;
         mResId = resource;
+        mRouteId = "";
+
     }
     public List<NavigationItem> getItems() {
         return mItems;

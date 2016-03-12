@@ -1,6 +1,7 @@
 package org.oway_team.oway;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ public class RouteManagementFragment extends Fragment implements APIListener {
     ImageView mCityLogo;
 
     SearchView mSearchView;
+
     private static final String TAG = "OWay-RouteManagement";
 
     FloatingActionButton mLetsGoButton;
@@ -141,7 +143,28 @@ public class RouteManagementFragment extends Fragment implements APIListener {
     }
 
     @Override
-    public void onRouteReady(NavigationRoute route) {
+    public void onRouteReady(final NavigationRoute route) {
+        if (mAdapter == null || !mAdapter.getRouteId().equals(route.getRouteId())) {
+            Log.d(TAG, "Update route");
+            Activity activity = getActivity();
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mAdapter == null) {
+                            mAdapter = new NavigationItemsAdapter(getActivity(), R.layout.navigation_list_item, new ArrayList<NavigationItem>());
+                            mNavigationItemsListView.setAdapter(mAdapter);
+                        } else {
+                            mAdapter.clear();
+                        }
+                        mAdapter.addAll(route.getNavigationPoints());
+                        mAdapter.setRouteId(route.getRouteId());
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }
+
 
     }
 

@@ -2,6 +2,9 @@ package org.oway_team.oway.utils;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,12 +20,14 @@ public class AsyncHttpLoader {
     BufferedReader reader = null;
     String resultJson = "";
     String mUrl;
+    String mRouteId;
     Thread mThread;
     class LoaderTask implements Runnable {
         @Override
         public void run() {
             Thread parentThread = mThread;
             String sUrl = mUrl;
+            String sRouteId = mRouteId;
             try {
                 Thread.sleep(REQUEST_TIMEOUT);
             } catch (InterruptedException e) {
@@ -60,6 +65,8 @@ public class AsyncHttpLoader {
                 mListener.onLoadingError();
                 e.printStackTrace();
             }
+            if (!sRouteId.isEmpty())
+                resultJson = addRouteIdToJSON(resultJson, sRouteId);
             mListener.onHttpGetFinished(resultJson);
             if (mThread == parentThread)
                 mThread = null;
@@ -69,6 +76,7 @@ public class AsyncHttpLoader {
         mListener = listener;
     }
     public void load(String url) {
+        mRouteId = "";
         mUrl = url;
         if (mThread != null) {
             mThread.interrupt();
@@ -78,4 +86,26 @@ public class AsyncHttpLoader {
         mThread.start();
     }
 
+    /**FIXME: must be removed later**/
+    public void load(String url, String routeId) {
+        mUrl = url;
+        mRouteId = routeId;
+        if (mThread != null) {
+            mThread.interrupt();
+            mThread = null;
+        }
+        mThread = new Thread(new LoaderTask());
+        mThread.start();
+    }
+    /**FIXME: must be removed later**/
+    private String addRouteIdToJSON(String jString, String routeId) {
+        try {
+            JSONObject jobj = new JSONObject(jString);
+            jobj.put("id",routeId);
+            return jobj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jString;
+    }
 }

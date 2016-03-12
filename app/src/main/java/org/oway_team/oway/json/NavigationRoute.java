@@ -30,6 +30,8 @@ public class NavigationRoute {
      */
     private List<NavigationLineString> mLineStrings;
 
+    private String mRouteId;
+
     private NavigationRoute() {
         mLineStrings = new ArrayList<NavigationLineString>();
         mNavigationPoints = new ArrayList<NavigationItem>();
@@ -41,6 +43,9 @@ public class NavigationRoute {
             JSONObject rootObj = new JSONObject(jString);
             route.mTotalDistance = rootObj.getInt("total_distance")/1000.d;
             route.mTotalDuration = rootObj.getInt("total_duration")/60;
+            if (!rootObj.isNull("id")) {
+                route.mRouteId = rootObj.getString("id");
+            }
             if (!rootObj.isNull("points")) {
                 jArr = rootObj.getJSONArray("points");
                 for (int i = 0; i < jArr.length(); i++) {
@@ -88,4 +93,12 @@ public class NavigationRoute {
     }
 
 
+    public String getRouteId() {
+        return mRouteId;
+    }
+
+    /** Temporarily hack. Must be removed later! **/
+    public void setRouteId(String routeId) {
+        this.mRouteId = routeId;
+    }
 }

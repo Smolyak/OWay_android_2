@@ -33,7 +33,8 @@ public class NavigationRouterProxy implements AsyncHttpLoaderListener {
     public void loadRoute(String routeId) {
         String url = API.API_LIST_ENTRY_POINT+"/"+routeId+"/way";
         Log.d(TAG,"Trying to load: "+url);
-        mLoader.load(url);
+        //mLoader.load(url);
+        mLoader.load(url, routeId);
     }
 
     @Override
