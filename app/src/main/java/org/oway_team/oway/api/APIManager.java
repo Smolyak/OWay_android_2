@@ -2,8 +2,11 @@ package org.oway_team.oway.api;
 
 
 
+import android.content.Context;
 import android.util.Log;
+import android.util.TypedValue;
 
+import org.oway_team.oway.R;
 import org.oway_team.oway.json.JSONRequestBuilder;
 import org.oway_team.oway.json.NavigationItem;
 import org.oway_team.oway.json.NavigationProxyListener;
@@ -15,10 +18,14 @@ import org.oway_team.oway.json.SuggesterProxyListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.yandex.yandexmapkit.utils.GeoPoint;
+
 public class APIManager {
     private final static String TAG = "OWay-ApiManager";
     private static APIManager mInstance;
     List<APIListener> mListeners;
+    GeoPoint mInitialPosition;
+    API mApi;
 
     NavigationRouterProxy mRouteLoader;
     NavigationProxyListener mRouteLoaderListener = new NavigationProxyListener() {
@@ -77,6 +84,17 @@ public class APIManager {
             listener.onRouteLoadingStarted();
     }
 
+    public void setContext(Context ctx) {
+        //do not save ctx here
+        mApi = APIBuilder.buildAPI(ctx);
+        //FIXME: Novosibirsk; Hardcoded for now
+        TypedValue outValue = new TypedValue();
+        ctx.getResources().getValue(R.dimen.novosibirsk_lat, outValue, true);
+        float lat = outValue.getFloat();
+        ctx.getResources().getValue(R.dimen.novosibirsk_lat, outValue, true);
+        float lon = outValue.getFloat();
+        mInitialPosition = new GeoPoint(lat, lon);
+    }
     public static APIManager instance() {
         if (mInstance == null) {
             mInstance = new APIManager();
@@ -92,6 +110,9 @@ public class APIManager {
         if (listener != null) {
             mListeners.remove(listener);
         }
+    }
+    public API getApi() {
+        return mApi;
     }
 
     /**
@@ -129,5 +150,12 @@ public class APIManager {
         if (query.length() >= 2 ) {
             mSuggesterProxy.getAddr(query);
         }
+    }
+
+    /**
+     *  Returns the position of the city with which we work
+     */
+    public GeoPoint getInitialPosition() {
+        return mInitialPosition;
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oway_team.oway.api.API;
+import org.oway_team.oway.api.APIManager;
 import org.oway_team.oway.utils.AsyncHttpLoader;
 import org.oway_team.oway.utils.AsyncHttpLoaderListener;
 import org.oway_team.oway.utils.AsyncHttpPoster;
@@ -23,7 +24,7 @@ public class NavigationRouterProxy implements AsyncHttpLoaderListener {
         mLoader = new AsyncHttpLoader(this);
     }
     public void postPoints(String jQuery) {
-        mPoster.post(API.API_LIST_ENTRY_POINT,jQuery);
+        mPoster.post(APIManager.instance().getApi().getApiList() ,jQuery);
     }
 
     /**
@@ -31,7 +32,7 @@ public class NavigationRouterProxy implements AsyncHttpLoaderListener {
      * Ask server to build route
      */
     public void loadRoute(String routeId) {
-        String url = API.API_LIST_ENTRY_POINT+"/"+routeId+"/way";
+        String url = APIManager.instance().getApi().getApiList()+"/"+routeId+"/way";
         Log.d(TAG,"Trying to load: "+url);
         //mLoader.load(url);
         mLoader.load(url, routeId);

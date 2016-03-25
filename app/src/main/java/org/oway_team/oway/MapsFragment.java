@@ -1,9 +1,9 @@
 package org.oway_team.oway;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,11 +27,12 @@ import java.util.List;
 import ru.yandex.yandexmapkit.MapController;
 import ru.yandex.yandexmapkit.MapView;
 import ru.yandex.yandexmapkit.OverlayManager;
+import ru.yandex.yandexmapkit.map.Tile;
 import ru.yandex.yandexmapkit.overlay.Overlay;
 import ru.yandex.yandexmapkit.overlay.OverlayItem;
 import ru.yandex.yandexmapkit.overlay.balloon.BalloonItem;
 import ru.yandex.yandexmapkit.utils.GeoPoint;
-import ru.yandex.yandexmapkit.utils.Utils;
+import ru.yandex.yandexmapkit.utils.ScreenPoint;
 
 public class MapsFragment extends Fragment implements APIListener {
     public static final String TAG = "OWay-Map";
@@ -49,7 +50,7 @@ public class MapsFragment extends Fragment implements APIListener {
         mMapView.showBuiltInScreenButtons(true);
         mMapController = mMapView.getMapController();
         //Start map on Novosibirsk
-        mMapController.setPositionAnimationTo(new GeoPoint(55.018803, 82.933952));
+        mMapController.setPositionAnimationTo(APIManager.instance().getInitialPosition());
         mOverlayManager = mMapController.getOverlayManager();
 
         mCustomOverlays = new ArrayList<Overlay>();
@@ -60,11 +61,6 @@ public class MapsFragment extends Fragment implements APIListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if(mRoute != null) {
-//            //Ok; We're recved Context so we can draw route!
-//            onRouteReady(mRoute);
-//            mRoute = null;
-//        }
     }
 
     @Override
@@ -76,13 +72,11 @@ public class MapsFragment extends Fragment implements APIListener {
     @Override
     public void onStart() {
         super.onStart();
-//        APIManager.instance().addListener(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-//        APIManager.instance().removeListener(this);
     }
 
     public void clearMap() {

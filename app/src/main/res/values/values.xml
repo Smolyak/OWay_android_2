@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="novosibirsk_lon" format="float" type="dimen">82.933952</item>
+    <item name="novosibirsk_lat" format="float" type="dimen">55.018803</item>
+</resources>

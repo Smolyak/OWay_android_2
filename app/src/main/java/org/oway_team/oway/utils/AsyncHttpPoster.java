@@ -51,13 +51,14 @@ public class AsyncHttpPoster {
                 urlConnection.setDoOutput(true);
                 Log.d(TAG,"Geting output stream");
                 OutputStream os = urlConnection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
+
+                OutputStreamWriter writer = new OutputStreamWriter(os, "UTF-8");
                 writer.write(postContent);
                 writer.flush();
 
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
+
                 reader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -69,6 +70,7 @@ public class AsyncHttpPoster {
             } catch (Exception e) {
                 mListener.onLoadingError();
                 e.printStackTrace();
+                return;
             }
             mListener.onHttpPostFinished(resultJson);
             if (mThread == parentThread)

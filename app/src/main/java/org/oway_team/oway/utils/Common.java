@@ -9,7 +9,10 @@ import android.util.Log;
 
 import org.oway_team.oway.json.NavigationItem;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import ru.yandex.yandexmapkit.utils.GeoPoint;
 
 public class Common {
     public static Drawable getDrawable(Context context, int id) {
@@ -30,5 +33,24 @@ public class Common {
             }
         }
         return cursor;
+    }
+
+    /**
+     *
+     * @param itemsList
+     * @return List of retreived geopoints
+     */
+    @org.jetbrains.annotations.NotNull
+    public static List<GeoPoint> navItemsToGeoPoints (List<NavigationItem> itemsList) {
+        List<GeoPoint> resList = new ArrayList<GeoPoint>();
+        GeoPoint location;
+        if (itemsList != null) {
+            for (NavigationItem item: itemsList) {
+                location = item.location;
+                if (location.getLat() > 0 && location.getLon() > 0)
+                    resList.add(item.location);
+            }
+        }
+        return resList;
     }
 }

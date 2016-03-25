@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oway_team.oway.api.API;
+import org.oway_team.oway.api.APIManager;
 import org.oway_team.oway.utils.AsyncHttpLoader;
 import org.oway_team.oway.utils.AsyncHttpLoaderListener;
 
@@ -44,7 +45,8 @@ public class SuggesterProxy implements AsyncHttpLoaderListener {
     public void getAddr(String addr) {
         mCurrentTask = TASK_ADDR;
         try {
-            mLoader.load(API.ADDRESS_PREFIX+ URLEncoder.encode(addr, "UTF-8"));
+            mLoader.load(APIManager.instance().getApi().getAddressPrefix()
+                    + URLEncoder.encode(addr, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
